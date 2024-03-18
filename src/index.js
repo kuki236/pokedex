@@ -1,39 +1,50 @@
-
-function mostrarPagina(numeroPagina=1){
-  const offset = (numeroPagina-1)*20
-  const urlApiPokemon = `https://pokeapi.co/api/v2/pokemon/?offset=${offset}&limit=20`
-  const listaPokemon = document.querySelector('.listaPokemonFila')
-  let numeroUrlPokemon =  (numeroPagina-1)*20
-  listaPokemon.innerHTML = '';
-  fetch(urlApiPokemon)
-    .then(respuesta => respuesta.json())
-    .then(respuestaJson => {
-      respuestaJson.results.forEach((objetoRespuesta) => {
-        const listaPokemon = document.querySelector('.listaPokemonFila')
-        const nombrePokemon = objetoRespuesta.name
-        const pNombrePokemon = document.createElement('p')
-        const espacioDivPokemon = document.createElement('div')
-        const imagenPokemon = document.createElement('img')
-        numeroUrlPokemon++
-        if (numeroUrlPokemon > 1025){
-          numeroUrlPokemonAdicional = numeroUrlPokemon+8975
-          const urlImagenPokemonAdicional = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${numeroUrlPokemonAdicional}.png`
-          imagenPokemon.src = urlImagenPokemonAdicional
-        }else{
-          const urlImagenPokemon = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${numeroUrlPokemon}.png`
-          imagenPokemon.src=urlImagenPokemon
-        }
-        imagenPokemon.classList.add('imagenPokemonLista')
-        espacioDivPokemon.appendChild(imagenPokemon)
-        espacioDivPokemon.classList.add('espacioPokemon')
-        pNombrePokemon.textContent = nombrePokemon
-        pNombrePokemon.classList.add('textoPokemonLista')
-        espacioDivPokemon.setAttribute('name', nombrePokemon)
-        espacioDivPokemon.appendChild(pNombrePokemon)
-        listaPokemon.appendChild(espacioDivPokemon)
+function mostrarPagina(numeroPagina = 1) {
+  return new Promise((resolve, reject) => {
+    const offset = (numeroPagina - 1) * 20;
+    const urlApiPokemon = `https://pokeapi.co/api/v2/pokemon/?offset=${offset}&limit=20`;
+    const listaPokemon = document.querySelector('.listaPokemonFila');
+    let numeroUrlPokemon = (numeroPagina - 1) * 20;
+    listaPokemon.innerHTML = '';
+    fetch(urlApiPokemon)
+      .then(respuesta => respuesta.json())
+      .then(respuestaJson => {
+        respuestaJson.results.forEach((objetoRespuesta) => {
+          const nombrePokemon = objetoRespuesta.name;
+          const pNombrePokemon = document.createElement('p');
+          const espacioDivPokemon = document.createElement('div');
+          const imagenPokemon = document.createElement('img');
+          numeroUrlPokemon++;
+          
+          if (numeroUrlPokemon > 1025) {
+            numeroUrlPokemonAdicional = numeroUrlPokemon + 8975;
+            const urlImagenPokemonAdicional = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${numeroUrlPokemonAdicional}.png`;
+            imagenPokemon.src = urlImagenPokemonAdicional;
+          } else {
+            const urlImagenPokemon = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${numeroUrlPokemon}.png`;
+            imagenPokemon.src = urlImagenPokemon;
+          }
+          
+          imagenPokemon.classList.add('imagenPokemonLista');
+          espacioDivPokemon.appendChild(imagenPokemon);
+          espacioDivPokemon.classList.add('espacioPokemon');
+          pNombrePokemon.textContent = nombrePokemon;
+          pNombrePokemon.classList.add('textoPokemonLista');
+          espacioDivPokemon.setAttribute('name', nombrePokemon);
+          espacioDivPokemon.appendChild(pNombrePokemon);
+          listaPokemon.appendChild(espacioDivPokemon);
+        });
+        asignarModalPokemon();
+        mostrarModalPokemon();
+        // Resolvemos la promesa después de agregar los Pokémon a la lista
+        resolve();
       })
-    })
+      .catch(error => {
+        // En caso de error, rechazamos la promesa
+        reject(error);
+      });
+  });
 }
+mostrarPagina();
 crearPaginador();
 let paginasPokemones = document.querySelectorAll('.paginaPokemon')
 paginasPokemones.forEach(pagina =>{
@@ -44,7 +55,59 @@ paginasPokemones.forEach(pagina =>{
     })
   })
 
+function crearModal(nombrePokemon){
+  return new Promise((resolve,reject)=>{
+    let $nombrePokemonModal = document.querySelector('.nombreModal')
+    $nombrePokemonModal.textContent = nombrePokemon
+    let urlDatosPokemon = `https://pokeapi.co/api/v2/pokemon/${nombrePokemon}`
+    fetch(urlDatosPokemon)
+      .then(respuesta => respuesta.json())
+      .then(respuestaJson =>{
 
+        let $imagenPokemonModal = document.querySelector('.imagenPokemonModal')
+        let urlImagenPokemonModal = respuestaJson.sprites.front_default
+        $imagenPokemonModal.setAttribute('src',urlImagenPokemonModal)
+
+        let $modalTipo = document.querySelector('.tiposPokemon')
+        respuestaJson.types.forEach(tipo =>{
+          let tipoPokemon  = ''
+          tipoPokemon = tipo.type.name
+          let $tipoModal = document.createElement('p')
+          console.log('tipoPokemon')
+          $tipoModal.textContent = tipoPokemon
+          $modalTipo.appendChild($tipoModal)
+        })
+
+
+        let $pModalHabilidad = document.querySelector('.habilidadesPokemon')
+        respuestaJson.abilities.forEach(ability =>{
+          let habilidad = ability.ability.name
+          let $pHabilidad = document.createElement('p')
+          $pHabilidad.textContent = habilidad
+          $pModalHabilidad.appendChild($pHabilidad)
+        })
+        let peso = respuestaJson.weight
+        let $pesoPokemon = document.querySelector('.pesoPokemon')
+        $pesoPokemon.textContent = `Peso: ${peso}`
+        let altura = respuestaJson.height
+        let $alturaPokemon = document.querySelector('.tallaPokemon')
+        $alturaPokemon.textContent = `Altura: ${altura}`
+        resolve();
+      })
+      .catch(error => {
+        reject(error);
+      });
+  }) 
+}
+function mostrarModalPokemon(){
+  let espacioPokemonModal = document.querySelectorAll('.espacioPokemon')
+  espacioPokemonModal.forEach(pokemonModal =>{
+    pokemonModal.addEventListener('click',function(){
+      let namePokemon = pokemonModal.getAttribute('name')
+      crearModal(namePokemon)
+    })
+  })
+}
 
 function crearPaginador(){
   crearPaginaAnterior()
@@ -94,5 +157,12 @@ function crearPaginaSiguiente(){
   $paginadorUl.appendChild($siguienteLi)
 }
 
-mostrarPagina();
 
+
+function asignarModalPokemon(){
+  let $pokemonesDisponibles= document.querySelectorAll('.espacioPokemon')
+  $pokemonesDisponibles.forEach(pokemonSeleccionado =>{
+    pokemonSeleccionado.setAttribute('data-bs-toggle','modal')
+    pokemonSeleccionado.setAttribute('data-bs-target','#pokemonSeleccionado')
+  })
+}

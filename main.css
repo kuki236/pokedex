@@ -17,6 +17,11 @@
     height: 120px;
     margin-left: 30%;
 }
+.imagenPokemonModal{
+  width: 120px;
+  height: 120px;
+  margin-left: 30%;
+}
 .textoPokemonLista{
     font-family: "Bebas Neue", sans-serif;
     font-size: 1.7rem;
