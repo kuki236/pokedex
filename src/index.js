@@ -1,34 +1,5 @@
-/*
-cargarApiLista1
-*/
-/*
-function inicializar () {
-  const urlApiPokemon = 'https://pokeapi.co/api/v2/pokemon/?offset=0&limit=20'
-  fetch(urlApiPokemon)
-    .then(respuesta => respuesta.json())
-    .then(respuestaJson => {
-      respuestaJson.results.forEach((objetoRespuesta, index) => {
-        const listaPokemon = document.querySelector('.listaPokemonFila')
-        const nombrePokemon = objetoRespuesta.name
-        const pNombrePokemon = document.createElement('p')
-        const espacioDivPokemon = document.createElement('div')
-        const numeroPokemon = index + 1
-        const urlImagenPokemon = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${numeroPokemon}.png`
-        const imagenPokemon = document.createElement('img')
-        imagenPokemon.src = urlImagenPokemon
-        imagenPokemon.classList.add('imagenPokemonLista')
-        espacioDivPokemon.appendChild(imagenPokemon)
-        espacioDivPokemon.classList.add('espacioPokemon')
-        pNombrePokemon.textContent = nombrePokemon
-        pNombrePokemon.classList.add('textoPokemonLista')
-        espacioDivPokemon.setAttribute('name', nombrePokemon)
-        espacioDivPokemon.appendChild(pNombrePokemon)
-        listaPokemon.appendChild(espacioDivPokemon)
-      })
-    })
-}
-*/
-function mostrarPagina(numeroPagina){
+
+function mostrarPagina(numeroPagina=1){
   const offset = (numeroPagina-1)*20
   const urlApiPokemon = `https://pokeapi.co/api/v2/pokemon/?offset=${offset}&limit=20`
   const listaPokemon = document.querySelector('.listaPokemonFila')
@@ -42,10 +13,16 @@ function mostrarPagina(numeroPagina){
         const nombrePokemon = objetoRespuesta.name
         const pNombrePokemon = document.createElement('p')
         const espacioDivPokemon = document.createElement('div')
-        numeroUrlPokemon++
-        const urlImagenPokemon = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${numeroUrlPokemon}.png`
         const imagenPokemon = document.createElement('img')
-        imagenPokemon.src = urlImagenPokemon
+        numeroUrlPokemon++
+        if (numeroUrlPokemon > 1025){
+          numeroUrlPokemonAdicional = numeroUrlPokemon+8975
+          const urlImagenPokemonAdicional = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${numeroUrlPokemonAdicional}.png`
+          imagenPokemon.src = urlImagenPokemonAdicional
+        }else{
+          const urlImagenPokemon = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${numeroUrlPokemon}.png`
+          imagenPokemon.src=urlImagenPokemon
+        }
         imagenPokemon.classList.add('imagenPokemonLista')
         espacioDivPokemon.appendChild(imagenPokemon)
         espacioDivPokemon.classList.add('espacioPokemon')
@@ -57,13 +34,24 @@ function mostrarPagina(numeroPagina){
       })
     })
 }
-mostrarPagina(28)
+crearPaginador();
+let paginasPokemones = document.querySelectorAll('.paginaPokemon')
+paginasPokemones.forEach(pagina =>{
+    pagina.addEventListener('click',function(){
+      let namePagina = pagina.getAttribute('name')
+      console.log(namePagina)
+      mostrarPagina(namePagina)
+    })
+  })
+
+
+
 function crearPaginador(){
   crearPaginaAnterior()
   crearListaPaginas()
   crearPaginaSiguiente()
 }
-crearPaginador();
+
 function crearPaginaAnterior(){
   const $paginadorUl = document.querySelector('.paginadorPokemonUl')
   const $anteriorLi = document.createElement('li')
@@ -86,7 +74,9 @@ function crearListaPaginas(){
      $pokemonLi.classList.add('page-item')
      const $pokemonA = document.createElement('a')
       $pokemonA.classList.add('page-link')
+      $pokemonA.classList.add('paginaPokemon')
       $pokemonA.textContent = i
+      $pokemonA.setAttribute('name',i)
       $pokemonA.setAttribute('href','#')
       $pokemonLi.appendChild($pokemonA)
       $paginadorUl.appendChild($pokemonLi)
@@ -103,3 +93,6 @@ function crearPaginaSiguiente(){
   $siguienteLi.appendChild($siguienteA)
   $paginadorUl.appendChild($siguienteLi)
 }
+
+mostrarPagina();
+
