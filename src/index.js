@@ -14,7 +14,6 @@ function mostrarPagina(numeroPagina = 1) {
           const espacioDivPokemon = document.createElement('div');
           const imagenPokemon = document.createElement('img');
           numeroUrlPokemon++;
-          
           if (numeroUrlPokemon > 1025) {
             numeroUrlPokemonAdicional = numeroUrlPokemon + 8975;
             const urlImagenPokemonAdicional = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${numeroUrlPokemonAdicional}.png`;
@@ -35,7 +34,15 @@ function mostrarPagina(numeroPagina = 1) {
         });
         asignarModalPokemon();
         mostrarModalPokemon();
+        let paginaActual = document.querySelector('.paginaActual');
+        if (paginaActual) {
+          paginaActual.classList.remove('paginaActual');
+        }
+        let paginaSeleccionada = document.querySelector(`.paginaPokemon[name="${numeroPagina}"]`);
+        paginaSeleccionada.classList.add('paginaActual');
+
         resolve();
+      
       })
       .catch(error => {
         reject(error);
@@ -43,16 +50,57 @@ function mostrarPagina(numeroPagina = 1) {
   });
 }
 mostrarPagina();
+
 crearPaginador();
 let paginasPokemones = document.querySelectorAll('.paginaPokemon')
+let paginaPokemonSiguiente = document.querySelector('.siguiente')
+let paginaPokemonAnterior = document.querySelector('.anterior')
+paginaPokemonAnterior.classList.remove('disabled')
+
 paginasPokemones.forEach(pagina =>{
     pagina.addEventListener('click',function(){
       let namePagina = pagina.getAttribute('name')
-      console.log(namePagina)
+      paginasPokemones.forEach(pagina => {
+        pagina.classList.remove('paginaActual');
+      });
+      pagina.classList.add('paginaActual')
       mostrarPagina(namePagina)
     })
   })
+paginaPokemonAnterior.addEventListener('click',function(){
+  let paginaActual = document.querySelector('.paginaActual')
+  let numeroPaginaActual = paginaActual.getAttribute('name')
+  let numeroPaginaAnterior = Number(numeroPaginaActual)-1
+  let $paginaAnterior = asignarActualPagina(numeroPaginaAnterior)
+  console.log($paginaAnterior)
+  $paginaAnterior.classList.add('paginaActual')
+  mostrarPagina(numeroPaginaAnterior)
+  paginaActual.classList.remove('paginaActual')
+})
+paginaPokemonSiguiente.addEventListener('click',function(){
+  let paginaActual = document.querySelector('.paginaActual')
+  let numeroPaginaActual = paginaActual.getAttribute('name')
+  let numeroPaginaSiguiente = Number(numeroPaginaActual)+1
+  let $paginaSiguiente = asignarActualPagina(numeroPaginaSiguiente)
+  $paginaSiguiente.classList.add('paginaActual')
+  mostrarPagina(numeroPaginaSiguiente)
+  paginaActual.classList.remove('paginaActual')
+})
 
+
+
+
+
+function asignarActualPagina(namePaginaPendiente){
+  let paginaEncontrada = null;
+  document.querySelectorAll('.paginaPokemon').forEach(pagina =>{
+    let numeroPaginaPendiente = pagina.getAttribute('name')
+    if(numeroPaginaPendiente == namePaginaPendiente){
+      paginaEncontrada = pagina
+    }
+  })
+  return paginaEncontrada
+}
 function crearModal(nombrePokemon){
   return new Promise((resolve,reject)=>{
     let $nombrePokemonModal = document.querySelector('.nombreModal')
@@ -132,6 +180,7 @@ function crearPaginaAnterior(){
   const $anteriorLi = document.createElement('li')
   $anteriorLi.classList.add('page-item')
   $anteriorLi.classList.add('disabled')
+  $anteriorLi.classList.add('anterior')
   const $anteriorA = document.createElement('a')
   $anteriorA.classList.add('page-link')
   $anteriorA.textContent = 'Anterior'
@@ -161,6 +210,7 @@ function crearPaginaSiguiente(){
   const $paginadorUl = document.querySelector('.paginadorPokemonUl')
   const $siguienteLi = document.createElement('li')
   $siguienteLi.classList.add('page-item')
+  $siguienteLi.classList.add('siguiente')
   const $siguienteA = document.createElement('a')
   $siguienteA.classList.add('page-link')
   $siguienteA.textContent = 'Siguiente'
