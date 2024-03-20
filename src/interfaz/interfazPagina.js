@@ -16,7 +16,7 @@ export function mostrarPagina (numeroPagina = 1) {
           const imagenPokemon = document.createElement('img')
           numeroUrlPokemon++
           if (numeroUrlPokemon > 1025) {
-            numeroUrlPokemonAdicional = numeroUrlPokemon + 8975
+            let numeroUrlPokemonAdicional = numeroUrlPokemon + 8975
             const urlImagenPokemonAdicional = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${numeroUrlPokemonAdicional}.png`
             imagenPokemon.src = urlImagenPokemonAdicional
           } else {

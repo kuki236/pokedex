@@ -1,11 +1,11 @@
 import { mostrarPagina } from '../interfaz/interfazPagina.js'
-export function logicaPaginaAnteriorSiguiente () {
-  manejarClicPagina()
-  manejarClicAnterior()
-  manejarClicSiguiente()
+export async function logicaPaginaAnteriorSiguiente () {
+  await manejarClicPagina()
+  await manejarClicAnterior()
+  await manejarClicSiguiente()
 }
 
-function manejarClicPagina () {
+async function manejarClicPagina () {
   const paginasPokemones = document.querySelectorAll('.paginaPokemon')
   paginasPokemones.forEach(pagina => {
     pagina.addEventListener('click', function () {
@@ -18,7 +18,7 @@ function manejarClicPagina () {
     })
   })
 }
-function manejarClicAnterior () {
+async function manejarClicAnterior () {
   const paginaPokemonAnterior = document.querySelector('.anterior')
   paginaPokemonAnterior.classList.remove('disabled')
   paginaPokemonAnterior.addEventListener('click', function () {
@@ -31,7 +31,7 @@ function manejarClicAnterior () {
     paginaActual.classList.remove('paginaActual')
   })
 }
-function manejarClicSiguiente () {
+async function manejarClicSiguiente () {
   const paginaPokemonSiguiente = document.querySelector('.siguiente')
   paginaPokemonSiguiente.addEventListener('click', function () {
     const paginaActual = document.querySelector('.paginaActual')

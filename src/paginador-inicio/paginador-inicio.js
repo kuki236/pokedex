@@ -1,4 +1,4 @@
-export function crearPaginador () {
+export async function crearPaginador () {
   crearPaginaAnterior()
   crearListaPaginas()
   crearPaginaSiguiente()
